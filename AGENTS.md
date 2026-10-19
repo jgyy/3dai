@@ -77,7 +77,7 @@ xianxia fantasy, ancient Chinese immortal cultivation world, stylized realistic,
 ├── docs/
 │   ├── character-pipeline.md      # guide: heroine
 │   ├── environment-pipeline.md    # guide: world
-│   └── assets/reference/          # curriculum screenshots used by the guides
+│   └── screenshots/               # in-engine screenshots used by PRs and the README
 ├── art/                           # source material, not shipped
 │   ├── concepts/<asset>/          # 2D references (committed, PNG)
 │   ├── manifests/*.yaml           # `tripo batch run` manifests (committed)
@@ -149,7 +149,9 @@ Never invent `--param` keys. Look them up with `tripo docs --topic commands/gene
 
 ```bash
 codex exec -s workspace-write -C . "<task>"                 # non-interactive run in this repo
-codex exec -s workspace-write -i art/concepts/heroine/concept.png "<task>"   # attach a reference image
+codex exec -s workspace-write -i art/concepts/heroine/concept.png - <<'EOF'   # attach a reference image;
+<task>                                                                       # -i is variadic, so the prompt goes on stdin
+EOF
 ```
 
 Codex has the `image_generation` feature enabled. Use it for 2D references only: concept sheets, isometric master references, texture references. Always tell it the output path (`art/concepts/<asset>/<name>.png`) and verify the file exists afterwards. If the file is not written, fall back to `tripo generate text-to-image`.

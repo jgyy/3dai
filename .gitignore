@@ -32,3 +32,4 @@ tripo-out/
 *.blend2
 .env
 node_modules/
+.tripo/

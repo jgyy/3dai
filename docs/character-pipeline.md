@@ -2,7 +2,7 @@
 
 How to take the female xianxia protagonist from an idea to a rigged, animated, game-ready character in **Godot 4**, using **Codex CLI** for 2D references and **Tripo CLI** for 3D generation, with **Blender** for cleanup.
 
-This guide adapts a nine-module character curriculum (screenshots are embedded at each stage). The curriculum targets ChatGPT, Nano Banana, Tripo's web app, Modddif, Marmoset, Unity, and Unreal Engine 5. Here every step runs from the terminal, and the last stage targets Godot.
+This guide adapts a nine-module character curriculum (each stage opens with a short summary of the matching module). The curriculum targets ChatGPT, Nano Banana, Tripo's web app, Modddif, Marmoset, Unity, and Unreal Engine 5. Here every step runs from the terminal, and the last stage targets Godot.
 
 > AI agents: read [`AGENTS.md`](../AGENTS.md) first. Its hard rules (dry-run before spending credits, inspect every result, stay on theme, heroine is female) apply to every command below.
 
@@ -87,7 +87,7 @@ Keep this brief open while you work. Every prompt below is derived from it.
 
 ## Module 1: Concept development
 
-![Module 1: Concept development](assets/reference/character-m1-concept-development.png)
+> **Curriculum summary.** Create strong 2D references for the whole character pipeline: generate the core idea, refine it into a clean production-ready concept, split the character into parts, and prepare extra views for accurate 3D generation. This stage saves time on every step that follows.
 
 **Goal:** a complete set of clean 2D references ready for 3D generation.
 **Tools:** Codex CLI (image generation), `tripo generate text-to-image`.
@@ -112,12 +112,16 @@ Every later stage inherits the concept. A concept with clear shapes, one outfit,
 2. **Refine to a production-ready concept.** Attach the first result and fix problems one at a time (sleeve length, hairpin shape, sword position). Change one thing per request so you can tell what helped.
 
    ```bash
-   codex exec -s workspace-write -i art/concepts/heroine/front.png \
-     "Same character. Make the outer robe sleeves shorter so the hands are visible, keep everything else \
-   identical. Save as art/concepts/heroine/front_v2.png."
+   codex exec -s workspace-write -i art/concepts/heroine/front.png - <<'EOF'
+   Same character as the attached image. Replace the sheer layered sleeves with opaque medium-width sleeves
+   ending at the wrist, and shorten the skirt to calf length so both legs and boots are visible. Keep
+   everything else identical. Save as art/concepts/heroine/front_v2.png and confirm the file exists.
+   EOF
    ```
 
-3. **Prepare the views Tripo needs.** Generate **back**, **side**, and **three-quarter** views of the same character by attaching `front_v2.png` each time. Save them as `back.png`, `side.png`, and `three_quarter.png`.
+   `-i` accepts several files, so a prompt placed after it is swallowed as another file name. Pass the prompt on stdin (`-`) as shown. Simplify cloth that will be rigged: sheer layers, floor-length skirts, and hanging sleeve panels generate badly and deform worse.
+
+3. **Prepare the views Tripo needs.** Generate **back**, **side**, and **three-quarter** views of the same character by attaching `front_v2.png` each time. Save them as `back.png`, `left.png`, and `three_quarter.png`. Tripo maps multiview images by **file name** (`front`, `back`, `left`, `right`), so use those exact words.
 4. **Split into parts.** Generate one sheet with the separated parts: hair, outer robe, inner robe, sash, sword and scabbard, boots, jewellery. Save it as `parts.png`. You will use it to check Module 3 and for texture references in Module 7.
 5. **Fallback without Codex.** If image generation is unavailable, Tripo can produce a T-pose reference directly:
 
@@ -139,13 +143,13 @@ Every later stage inherits the concept. A concept with clear shapes, one outfit,
 
 Ask for several views on **one** sheet (front, side, back, three-quarter) in a single request, then crop them. It uses one generation instead of four.
 
-**You walk away with:** `art/concepts/heroine/` holding `front_v2.png`, `back.png`, `side.png`, `three_quarter.png`, `parts.png`.
+**You walk away with:** `art/concepts/heroine/` holding `front_v2.png`, `back.png`, `left.png`, and optionally `three_quarter.png` and `parts.png`.
 
 ---
 
 ## Module 2: 3D model generation
 
-![Module 2: 3D model generation](assets/reference/character-m2-3d-model-generation.png)
+> **Curriculum summary.** Turn the 2D references into initial 3D meshes with AI generation tools: choose the right generator, evaluate results, regenerate weak outputs, and bring the selected meshes into Blender. The goal is a usable base model and separated generated parts, ready for cleanup and sculpting.
 
 **Goal:** a raw 3D base model, plus generated parts, ready for refinement.
 **Tools:** `tripo make`, Blender.
@@ -161,18 +165,18 @@ Ask for several views on **one** sheet (front, side, back, three-quarter) in a s
 2. **Generate from the concept images.** Image input follows the concept more closely than text. Four views give the best likeness:
 
    ```bash
-   tripo make art/concepts/heroine/front_v2.png art/concepts/heroine/back.png art/concepts/heroine/side.png \
-     --for game-pc -n 4 --name heroine-base -o art/tripo-out/heroine --json --yes
+   tripo make art/concepts/heroine/front_v2.png art/concepts/heroine/left.png art/concepts/heroine/back.png \
+     --model tripo-v3.1 -p texture_quality=detailed -n 4 --name heroine-base -o art/tripo-out/heroine --json --yes
    ```
 
-   `-n 4` creates four candidates in parallel so you can pick the best.
+   `-n 4` creates four candidates in parallel so you can pick the best (about 40 credits each). The `--for game-pc` preset appends a convert step, and `-n` cannot be combined with a chain (exit 2: "needs an interactive terminal to pick the winner"), so the model and texture quality are set explicitly instead.
 3. **Evaluate.** Open each `preview.png`. Pick the candidate with the best silhouette and the cleanest hands, face, and hair. If none is usable, regenerate with a fresh seed:
 
    ```bash
    tripo redo @heroine-base
    ```
 
-4. **Text-only variant.** If you have no usable images, generate from the prompt in step 1 without `--dry-run`. Accept a rougher likeness.
+4. **Text-only variant.** If you have no usable images, generate from the prompt in step 1 without `--dry-run`, and drop `-n 4` (or swap `--for game-pc` for `--model tripo-v3.1`). Accept a rougher likeness.
 5. **Generate separate parts** when the generator merges hair, sword, and robe into one lump. Either segment the finished model:
 
    ```bash
@@ -208,7 +212,7 @@ Ask for several views on **one** sheet (front, side, back, three-quarter) in a s
 
 ## Module 3: Sculpting
 
-![Module 3: Sculpting](assets/reference/character-m3-sculpting.png)
+> **Curriculum summary.** Clean up the generated geometry and reshape the character into a stronger final form: correct major artefacts, improve silhouette and anatomy, align the model into a proper pose, and prepare separate parts for assembly. This is where the AI result starts becoming an intentional character instead of just a generated mesh.
 
 **Goal:** a cleaned, sculpted high-poly character with an improved silhouette and anatomy.
 **Tools:** Blender.
@@ -238,7 +242,7 @@ AI geometry comes out with artefacts. This is the stage where it becomes an inte
 
 ## Module 4: Retopology and optimization
 
-![Module 4: Retopology and optimization](assets/reference/character-m4-retopology-optimization.png)
+> **Curriculum summary.** Convert the sculpted high-poly result into a cleaner, lighter low-poly mesh suitable for games and animation: use AI-assisted retopology, optimise mesh density, align low and high versions, and manually fix important topology issues. Pay special attention to silhouette preservation, deformation areas, and production-friendly geometry.
 
 **Goal:** a light low-poly mesh that matches the sculpt and is ready for UVs, baking, texturing, and rigging.
 **Tools:** `tripo mesh decimate`, Blender.
@@ -259,10 +263,10 @@ AI geometry comes out with artefacts. This is the stage where it becomes an inte
      -o art/tripo-out/heroine --json --yes
    ```
 
-4. **Direct command when you already have a task.**
+4. **Direct command when you already have a task.** If you skipped sculpting, decimate the chosen candidate by its task id (candidates are named `heroine-base-c1` … `c4`, so `@heroine-base` does not resolve):
 
    ```bash
-   tripo mesh decimate @heroine-base --face-limit 20000 --name heroine-lowpoly
+   tripo mesh decimate <task-id> --face-limit 16000 --name heroine-lowpoly
    ```
 
 5. **Manually fix important topology in Blender.** Check edge loops at the **shoulders, elbows, knees, hips, and the neck**, because these areas deform. Add loops where the bend collapses.
@@ -276,7 +280,7 @@ AI geometry comes out with artefacts. This is the stage where it becomes an inte
 | Body and robes | ~11,000 |
 | Sword and accessories | ~3,000 |
 
-Tripo's decimate accepts **500–20,000 triangles** (10,000 for quad). `--quad` output cannot be exported as glTF, so use quads only if you plan to finish in Blender and export again.
+Tripo's decimate accepts **500–20,000 faces** (10,000 for quad). `face_limit` is not a hard triangle cap: `20000` produced 24,233 triangles in Blender and `16000` produced 20,372, so ask for about 80% of your budget and measure. `--quad` output cannot be exported as glTF, so use quads only if you plan to finish in Blender and export again.
 
 ### Checklist
 
@@ -291,12 +295,14 @@ Tripo's decimate accepts **500–20,000 triangles** (10,000 for quad). `--quad` 
 
 ## Module 5: UV unwrapping
 
-![Module 5: UV unwrapping](assets/reference/character-m5-uv-unwrapping.png)
+> **Curriculum summary.** Prepare the low-poly model for texturing by creating clean UVs: know when automatic unwrapping works, how to detect mistakes, and how to fix seams, islands, and material organisation in Blender. This module makes the model technically ready for baking and texture painting.
 
 **Goal:** clean UVs and organised materials, so the model is technically ready for baking and painting.
 **Tools:** Blender, `tripo mesh uv`.
 
 ### Steps
+
+> If the generation was textured (the default) and decimation baked it, the model already has clean UVs and a matching texture. You may skip the automatic unwrap and AI re-texture (Module 7, step 1) and only inspect the UVs. The shipped heroine did this.
 
 1. **Try the automatic unwrap.** It re-unwraps and remaps the existing textures, rig, and animation (input must be ≤ 80,000 triangles, which Module 4 guarantees):
 
@@ -328,7 +334,7 @@ Tripo's decimate accepts **500–20,000 triangles** (10,000 for quad). `--quad` 
 
 ## Module 6: Texture baking
 
-![Module 6: Texture baking](assets/reference/character-m6-texture-baking.png)
+> **Curriculum summary.** Transfer high-poly detail onto the optimised low-poly mesh: learn the logic of baking, how normal maps and other texture maps are generated, and how to use both automated and manual baking workflows for production-ready results.
 
 **Goal:** a baked low-poly model with the essential texture maps, ready for texturing.
 **Tools:** Blender, Tripo's built-in bake.
@@ -363,7 +369,7 @@ Tripo's decimate accepts **500–20,000 triangles** (10,000 for quad). `--quad` 
 
 ## Module 7: Painting and texturing
 
-![Module 7: Painting and texturing](assets/reference/character-m7-painting-texturing.png)
+> **Curriculum summary.** Build the final surface look of the character with AI-assisted and manual texturing: create and refine base colour, adjust materials, paint corrections by hand, and build core PBR maps including roughness, metallic, and emission. This is where the model gets its final visual identity.
 
 **Goal:** the final surface look, with production-ready PBR maps.
 **Tools:** `tripo model texture`, Blender, Codex CLI for references.
@@ -403,25 +409,28 @@ Tripo's decimate accepts **500–20,000 triangles** (10,000 for quad). `--quad` 
 
 ## Module 8: Rigging and animation
 
-![Module 8: Rigging and animation](assets/reference/character-m8-rigging-animation.png)
+> **Curriculum summary.** Prepare the character for movement by building or importing a skeleton and fixing deformation weights: learn the basics of rigging, compare auto-rig solutions, and correct the most important weight-painting areas for clean animation. A simple animation pass tests the character in motion.
 
 **Goal:** a rigged character with clean deformation and a test animation set.
 **Tools:** `tripo anim`, Blender (weight fixes), Godot (retargeting).
 
 ### Steps
 
-1. **Check riggability first.** It is cheap and catches problems before you spend rig credits. The input must be a GLB:
+1. **Check riggability first.** It is free and catches problems before you spend rig credits. The input must be a GLB. The CLI prints nothing useful, so read the result from the task:
 
    ```bash
    tripo anim check @heroine-textured --json
+   tripo task get @last --json   # → output: {"riggable": true, "rig_type": "biped"}
    ```
 
-2. **Rig.** The Mixamo spec gives humanoid bone names that Godot maps with `SkeletonProfileHumanoid`:
+2. **Rig.** Pass the rig model explicitly, because `tripo anim rig` otherwise lets the server pick its older default and the preset names change:
 
    ```bash
-   tripo anim rig @heroine-textured --rig-type biped --spec mixamo --out-format glb \
+   tripo anim rig @heroine-textured --rig-type biped --out-format glb -p model=v2.5-20260210 \
      --name heroine-rigged -o art/tripo-out/heroine --json --yes
    ```
+
+   `--spec mixamo` was accepted, but the GLB still came back with Tripo's own bone names (`tripo::Root`, `bone_27`, …), so it did not give a ready `SkeletonProfileHumanoid` map. Check the bone names in Blender before relying on it.
 
 3. **Apply preset animations** (up to 5 per call, billed per animation). Use `--animate-in-place` so Godot's `CharacterBody3D` moves the character:
 
@@ -432,6 +441,17 @@ Tripo's decimate accepts **500–20,000 triangles** (10,000 for quad). `--quad` 
    ```
 
    Other presets: `preset:hurt`, `preset:fall`, `preset:turn`, `preset:climb`, `preset:shoot`, `preset:dive`.
+
+   > **Known issue (2026-10, tripo-cli 0.7.0).** `anim retarget` failed with error 1004 (`Invalid input parameter`, at 99%) for every model, preset, output format, and rig spec we tried, including the one-shot `--for anim` chain. Failed tasks are refunded, so retrying costs nothing. Until it works, author the clips in Blender with the fallback below.
+
+   **Fallback: author the clips in Blender.** `scripts/blender/build_heroine.py` takes the rigged GLB, scales it to 1.65 m, turns it to face +Z, moves the origin to the floor, keys `idle-loop`, `walk-loop`, `run-loop`, `jump`, and `slash` on Tripo's skeleton, and exports one GLB:
+
+   ```bash
+   PATH=/usr/bin:$PATH blender -b --factory-startup --python scripts/blender/build_heroine.py -- \
+     art/tripo-out/heroine/<rig-task-dir>/model.glb game/assets/characters/heroine/heroine.glb
+   ```
+
+   `PATH=/usr/bin:$PATH` stops Blender's embedded Python from picking up a uv or pyenv interpreter (`No module named 'math'`).
 4. **Check deformation in Blender.** Import the GLB, scrub through each animation, and look at these weight-paint trouble spots:
    - **Shoulders and armpits** (sleeves collapsing)
    - **Hips and robe skirt** (legs poking through the cloth)
@@ -460,7 +480,7 @@ tripo make "young female xianxia sword cultivator, slender, long black hair half
 - [ ] `riggable: true` and `rig_type: biped`.
 - [ ] Idle, walk, run, jump, and slash play without the body folding.
 - [ ] Sleeves and robe do not tear through the body.
-- [ ] Animation names are lower case (`idle`, `walk`, `run`, `jump`, `slash`).
+- [ ] Animation names are lower case. Loops end in `-loop` in the source (`idle-loop`, `walk-loop`, `run-loop`) and Godot imports them as `idle`, `walk`, `run` with loop mode set. `jump` and `slash` play once.
 
 **You walk away with:** a rigged, animation-ready character with clean deformations.
 
@@ -468,7 +488,7 @@ tripo make "young female xianxia sword cultivator, slender, long black hair half
 
 ## Module 9: Export to Godot
 
-![Module 9: Export to game engine](assets/reference/character-m9-export-to-game-engine.png)
+> **Curriculum summary.** Finalise the character for real-time use and presentation: export properly, prepare textures and maps for the engine, and bring the character in. The result is a game-ready asset that can be previewed, tested, and presented in a real engine environment.
 
 **Goal:** a game-ready heroine imported into Godot 4, previewed, and tested in a scene.
 **Tools:** Godot 4.4+.
@@ -477,7 +497,7 @@ tripo make "young female xianxia sword cultivator, slender, long black hair half
 
 ### Steps
 
-1. **Convert and place the file.** Godot's native format is glTF/GLB. Pivot at the feet and real-world size help the import:
+1. **Place the file.** The Blender script in Module 8 already writes a Godot-ready GLB (1.65 m, facing +Z, origin at the feet). If you retargeted with Tripo instead, convert it. Tripo's default export orientation is `+x`, which faces +X, so set `--export-orientation` as the last step:
 
    ```bash
    tripo model convert @heroine-animated --format GLTF --pivot-to-center-bottom --auto-size \
@@ -486,7 +506,7 @@ tripo make "young female xianxia sword cultivator, slender, long black hair half
    cp art/tripo-out/heroine/heroine-final/task.json game/assets/characters/heroine/heroine.task.json
    ```
 
-   Use the real output path from the command's JSON (`model_file`) if it differs.
+   Use the real output path from the command's JSON (`model_file`) if it differs. Write the provenance sidecar by hand if `task.json` contains upload keys or an account prefix (`tcli_…`); never commit those.
 2. **Let Godot import it:**
 
    ```bash
@@ -494,18 +514,19 @@ tripo make "young female xianxia sword cultivator, slender, long black hair half
    ```
 
 3. **Set the import options.** Double-click `heroine.glb` → **Advanced…**:
-   - Select the `Skeleton3D` node → **Retarget → Bone Map** → new `BoneMap` with profile `SkeletonProfileHumanoid`. Fix any unmapped bones.
+   - Only if you need to share animations with other humanoids: select the `Skeleton3D` node → **Retarget → Bone Map** → new `BoneMap` with profile `SkeletonProfileHumanoid`, and map Tripo's bone names by hand. Skip this for a single character.
    - Select each animation: loops (`idle`, `walk`, `run`) need **Loop Mode** set, or name them with a `-loop` suffix (`walk-loop`).
    - Keep **Meshes → Generate LODs** on.
    - Save, then re-import.
 4. **Create the scene.** `game/scenes/heroine.tscn`:
 
    ```text
-   Heroine (CharacterBody3D)
-   ├── CollisionShape3D      # CapsuleShape3D, radius 0.35, height 1.65
-   ├── Model                 # instance of heroine.glb, origin at the feet
-   ├── AnimationTree         # state machine: idle ↔ walk ↔ run, jump, slash
-   └── SpringBoneSimulator3D # hair, long sleeves, sash (optional, Godot 4.4+)
+   Heroine (CharacterBody3D, scripts/heroine.gd)
+   ├── CollisionShape3D      # CapsuleShape3D, radius 0.35, height 1.65, centred at y = 0.825
+   ├── Model                 # instance of heroine.glb, origin at the feet, owns the AnimationPlayer
+   └── CameraPivot           # top_level follow camera
+       └── Camera3D
+   # later: AnimationTree state machine, SpringBoneSimulator3D for hair and sleeves (Godot 4.4+)
    ```
 
 5. **Add `SpringBoneSimulator3D`** for hair and sleeves. Pick the bone chain from the head or shoulder down to the tip, and keep stiffness fairly high so the cloth never clips the body.

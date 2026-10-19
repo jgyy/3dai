@@ -1,0 +1,43 @@
+{
+  "asset": "heroine",
+  "description": "Female xianxia sword cultivator. Tripo multiview-to-model, decimated, rigged, then animated and normalised in Blender.",
+  "concepts": [
+    "art/concepts/heroine/front_v2.png",
+    "art/concepts/heroine/left.png",
+    "art/concepts/heroine/back.png"
+  ],
+  "tripo_chain": [
+    {
+      "step": "generate",
+      "type": "multiview_to_model",
+      "task_id": "67a76ba3-582d-4e44-83e0-a69a3b0ca981",
+      "model_version": "v3.1-20260211",
+      "model_seed": 841888531,
+      "texture_quality": "detailed",
+      "candidates": 4,
+      "picked": 3,
+      "credits": 40
+    },
+    {
+      "step": "decimate",
+      "type": "highpoly_to_lowpoly",
+      "task_id": "c4c8686b-bd6c-48f8-acf8-3e78439d5ec5",
+      "face_limit": 16000,
+      "result_triangles": 20372,
+      "credits": 30
+    },
+    {
+      "step": "rig",
+      "type": "animate_rig",
+      "task_id": "22ff1e84-f742-4175-b628-e26795fdf375",
+      "rig_type": "biped",
+      "model": "v2.5-20260210",
+      "credits": 25
+    }
+  ],
+  "blender": {
+    "script": "scripts/blender/build_heroine.py",
+    "does": "scale to 1.65 m, face +Z, origin at the floor, author idle-loop, walk-loop, run-loop, jump, slash"
+  },
+  "notes": "tripo anim retarget failed with error 1004 for every model tested (including the one-shot --for anim chain), so the animations are authored in Blender."
+}
