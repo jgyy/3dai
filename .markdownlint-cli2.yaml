@@ -1,0 +1,13 @@
+# Markdown style for the docs. Tables, long prompts, and mermaid make line length pointless.
+config:
+  default: true
+  MD013: false          # line length
+  MD033: false          # inline HTML (<br/> inside mermaid labels)
+  MD041: false          # first line heading (AGENTS.md has a plain H1 anyway)
+  MD024:
+    siblings_only: true
+globs:
+  - "**/*.md"
+ignores:
+  - "node_modules/**"
+  - ".github/pull_request_template.md"
