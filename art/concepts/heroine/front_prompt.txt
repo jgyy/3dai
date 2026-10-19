@@ -1,0 +1,30 @@
+Mode: built-in image_gen
+
+Generation prompt
+
+Use case: stylized-concept
+Asset type: front-view game character concept for a 3D modeling reference.
+Primary request: Generate one full-body concept image of a young adult female xianxia sword cultivator, slender with natural proportions for a height of 1.65 m. Long black hair worn half-up with a jade hairpin. Layered white and celadon-green hanfu, long flowing sleeves with silver cloud embroidery, qi sash, jade pendant, cloth boots, and a single straight sword (jian) sheathed on her back.
+Scene/backdrop: plain uniform light-grey background, no scenery or floor line.
+Composition/framing: strict straight-on front view, centered, full body uncropped from the highest hairpin and sword pommel to the soles of both boots, with comfortable blank margins. One character only.
+Pose: symmetrical relaxed A-pose; both arms extended diagonally down and outward about 45 degrees away from the torso, elbows almost straight. Both hands and all fingers clearly visible beyond the sleeve cuffs, with clear space between the arms and torso. Long sleeves drape downward without concealing the hands. Feet planted shoulder-width apart, facing forward. Neutral facial expression, head upright, looking straight ahead.
+Lighting: flat even diffuse lighting across the character; no cast shadows on the background or beneath her feet.
+Materials/textures: soft painterly PBR textures, readable layered cloth, delicate silver cloud embroidery, polished jade hairpin and pendant.
+Constraints: young woman; ancient Chinese xianxia clothing; faithful front view; one outfit; no extra characters, extra limbs, text, labels, watermark, modern clothing, guns, sci-fi objects, or neon colors. Keep both hands and boots fully visible. No dramatic lighting or ground shadow.
+Style: xianxia fantasy, ancient Chinese immortal cultivation world, stylized realistic, soft painterly PBR textures, jade and celadon palette.
+
+Stance refinement
+
+Use case: precise-object-edit
+Asset type: front-view game character concept for a 3D modeling reference.
+Input image: the generated female xianxia cultivator concept is the edit target.
+Primary request: Correct the lower-body stance to feet shoulder-width apart. Move both legs and cloth boots outward symmetrically so the centers of the feet sit directly below the shoulder joints, keeping the feet facing forward and both soles at the same height. Adjust only the lower robe drape as necessary around the widened stance. Both boots must remain entirely visible.
+Invariants: Preserve the same young woman's face, neutral expression, slender 1.65 m proportions, half-up long black hair with jade hairpin, white and celadon layered hanfu, long flowing sleeves, silver cloud embroidery, qi sash, jade pendant, back-mounted straight sword, visible hands, 45-degree A-pose arms, strict front camera, stylized realism and soft painterly PBR texture. Retain flat even lighting, a plain light-grey background, no cast shadow, one character, full body uncropped, clear margins, no text or watermarks.
+
+Background refinement
+
+Use case: precise-object-edit
+Input image: the most recent female xianxia cultivator concept, with feet shoulder-width apart, is the edit target.
+Primary request: Change only the background to a completely uniform very light neutral grey, approximately #E5E5E5, across the entire canvas. No gradient, mottling, texture, floor line, cast shadow, or vignette.
+Invariants: Preserve the character exactly as shown, including face, hair, jade hairpin, sword, entire white and celadon costume, silver embroidery, hanging sash and jade pendant, proportions, both fully visible hands, A-pose, and shoulder-width stance. Preserve all delicate semi-transparent sleeve edges and robe drapes. Maintain the front view, full-body uncropped framing, canvas dimensions, flat even character lighting, stylized realistic painterly PBR style, and single character. No text, no watermarks.
+
