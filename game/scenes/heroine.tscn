@@ -1,0 +1,25 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="PackedScene" path="res://assets/characters/heroine/heroine.glb" id="1_model"]
+[ext_resource type="Script" path="res://scripts/heroine.gd" id="2_script"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_body"]
+radius = 0.35
+height = 1.65
+
+[node name="Heroine" type="CharacterBody3D"]
+script = ExtResource("2_script")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.825, 0)
+shape = SubResource("CapsuleShape3D_body")
+
+[node name="Model" parent="." instance=ExtResource("1_model")]
+
+[node name="CameraPivot" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 0)
+top_level = true
+
+[node name="Camera3D" type="Camera3D" parent="CameraPivot"]
+transform = Transform3D(1, 0, 0, 0, 0.951, 0.309, 0, -0.309, 0.951, 0, 0.7, 3.4)
+current = true
