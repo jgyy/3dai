@@ -2,7 +2,7 @@
 
 How to take the female xianxia protagonist from an idea to a rigged, animated, game-ready character in **Godot 4**, using **Codex CLI** for 2D references and **Tripo CLI** for 3D generation, with **Blender** for cleanup.
 
-This guide adapts a nine-module character curriculum (screenshots are embedded at each stage). The curriculum targets ChatGPT, Nano Banana, Tripo's web app, Modddif, Marmoset, Unity, and Unreal Engine 5. Here every step runs from the terminal, and the last stage targets Godot.
+This guide adapts a nine-module character curriculum (each stage opens with a short summary of the matching module). The curriculum targets ChatGPT, Nano Banana, Tripo's web app, Modddif, Marmoset, Unity, and Unreal Engine 5. Here every step runs from the terminal, and the last stage targets Godot.
 
 > AI agents: read [`AGENTS.md`](../AGENTS.md) first. Its hard rules (dry-run before spending credits, inspect every result, stay on theme, heroine is female) apply to every command below.
 
@@ -87,7 +87,7 @@ Keep this brief open while you work. Every prompt below is derived from it.
 
 ## Module 1: Concept development
 
-![Module 1: Concept development](assets/reference/character-m1-concept-development.png)
+> **Curriculum summary.** Create strong 2D references for the whole character pipeline: generate the core idea, refine it into a clean production-ready concept, split the character into parts, and prepare extra views for accurate 3D generation. This stage saves time on every step that follows.
 
 **Goal:** a complete set of clean 2D references ready for 3D generation.
 **Tools:** Codex CLI (image generation), `tripo generate text-to-image`.
@@ -145,7 +145,7 @@ Ask for several views on **one** sheet (front, side, back, three-quarter) in a s
 
 ## Module 2: 3D model generation
 
-![Module 2: 3D model generation](assets/reference/character-m2-3d-model-generation.png)
+> **Curriculum summary.** Turn the 2D references into initial 3D meshes with AI generation tools: choose the right generator, evaluate results, regenerate weak outputs, and bring the selected meshes into Blender. The goal is a usable base model and separated generated parts, ready for cleanup and sculpting.
 
 **Goal:** a raw 3D base model, plus generated parts, ready for refinement.
 **Tools:** `tripo make`, Blender.
@@ -208,7 +208,7 @@ Ask for several views on **one** sheet (front, side, back, three-quarter) in a s
 
 ## Module 3: Sculpting
 
-![Module 3: Sculpting](assets/reference/character-m3-sculpting.png)
+> **Curriculum summary.** Clean up the generated geometry and reshape the character into a stronger final form: correct major artefacts, improve silhouette and anatomy, align the model into a proper pose, and prepare separate parts for assembly. This is where the AI result starts becoming an intentional character instead of just a generated mesh.
 
 **Goal:** a cleaned, sculpted high-poly character with an improved silhouette and anatomy.
 **Tools:** Blender.
@@ -238,7 +238,7 @@ AI geometry comes out with artefacts. This is the stage where it becomes an inte
 
 ## Module 4: Retopology and optimization
 
-![Module 4: Retopology and optimization](assets/reference/character-m4-retopology-optimization.png)
+> **Curriculum summary.** Convert the sculpted high-poly result into a cleaner, lighter low-poly mesh suitable for games and animation: use AI-assisted retopology, optimise mesh density, align low and high versions, and manually fix important topology issues. Pay special attention to silhouette preservation, deformation areas, and production-friendly geometry.
 
 **Goal:** a light low-poly mesh that matches the sculpt and is ready for UVs, baking, texturing, and rigging.
 **Tools:** `tripo mesh decimate`, Blender.
@@ -291,7 +291,7 @@ Tripo's decimate accepts **500–20,000 triangles** (10,000 for quad). `--quad` 
 
 ## Module 5: UV unwrapping
 
-![Module 5: UV unwrapping](assets/reference/character-m5-uv-unwrapping.png)
+> **Curriculum summary.** Prepare the low-poly model for texturing by creating clean UVs: know when automatic unwrapping works, how to detect mistakes, and how to fix seams, islands, and material organisation in Blender. This module makes the model technically ready for baking and texture painting.
 
 **Goal:** clean UVs and organised materials, so the model is technically ready for baking and painting.
 **Tools:** Blender, `tripo mesh uv`.
@@ -328,7 +328,7 @@ Tripo's decimate accepts **500–20,000 triangles** (10,000 for quad). `--quad` 
 
 ## Module 6: Texture baking
 
-![Module 6: Texture baking](assets/reference/character-m6-texture-baking.png)
+> **Curriculum summary.** Transfer high-poly detail onto the optimised low-poly mesh: learn the logic of baking, how normal maps and other texture maps are generated, and how to use both automated and manual baking workflows for production-ready results.
 
 **Goal:** a baked low-poly model with the essential texture maps, ready for texturing.
 **Tools:** Blender, Tripo's built-in bake.
@@ -363,7 +363,7 @@ Tripo's decimate accepts **500–20,000 triangles** (10,000 for quad). `--quad` 
 
 ## Module 7: Painting and texturing
 
-![Module 7: Painting and texturing](assets/reference/character-m7-painting-texturing.png)
+> **Curriculum summary.** Build the final surface look of the character with AI-assisted and manual texturing: create and refine base colour, adjust materials, paint corrections by hand, and build core PBR maps including roughness, metallic, and emission. This is where the model gets its final visual identity.
 
 **Goal:** the final surface look, with production-ready PBR maps.
 **Tools:** `tripo model texture`, Blender, Codex CLI for references.
@@ -403,7 +403,7 @@ Tripo's decimate accepts **500–20,000 triangles** (10,000 for quad). `--quad` 
 
 ## Module 8: Rigging and animation
 
-![Module 8: Rigging and animation](assets/reference/character-m8-rigging-animation.png)
+> **Curriculum summary.** Prepare the character for movement by building or importing a skeleton and fixing deformation weights: learn the basics of rigging, compare auto-rig solutions, and correct the most important weight-painting areas for clean animation. A simple animation pass tests the character in motion.
 
 **Goal:** a rigged character with clean deformation and a test animation set.
 **Tools:** `tripo anim`, Blender (weight fixes), Godot (retargeting).
@@ -468,7 +468,7 @@ tripo make "young female xianxia sword cultivator, slender, long black hair half
 
 ## Module 9: Export to Godot
 
-![Module 9: Export to game engine](assets/reference/character-m9-export-to-game-engine.png)
+> **Curriculum summary.** Finalise the character for real-time use and presentation: export properly, prepare textures and maps for the engine, and bring the character in. The result is a game-ready asset that can be previewed, tested, and presented in a real engine environment.
 
 **Goal:** a game-ready heroine imported into Godot 4, previewed, and tested in a scene.
 **Tools:** Godot 4.4+.

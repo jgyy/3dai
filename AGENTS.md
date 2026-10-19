@@ -77,7 +77,7 @@ xianxia fantasy, ancient Chinese immortal cultivation world, stylized realistic,
 ├── docs/
 │   ├── character-pipeline.md      # guide: heroine
 │   ├── environment-pipeline.md    # guide: world
-│   └── assets/reference/          # curriculum screenshots used by the guides
+│   └── screenshots/               # in-engine screenshots used by PRs and the README
 ├── art/                           # source material, not shipped
 │   ├── concepts/<asset>/          # 2D references (committed, PNG)
 │   ├── manifests/*.yaml           # `tripo batch run` manifests (committed)

@@ -49,7 +49,7 @@ python3 scripts/check_docs.py
 
 | Path | Contents |
 | --- | --- |
-| `docs/` | The two pipeline guides and their reference screenshots |
+| `docs/` | The two pipeline guides (text only, each stage opens with a curriculum summary) |
 | `art/` | Concepts, batch manifests, and Blender files. Raw Tripo output (`art/tripo-out/`) is git-ignored |
 | `game/` | The Godot 4 project (`res://`) |
 | `scripts/check_docs.py` | Validates links, diagrams, and every Tripo command in the docs (dry run, no credits) |
@@ -60,4 +60,4 @@ Godot 4.4+, Blender 4.x, Node.js 20+ (for `tripo-cli`), Codex CLI, Python 3.10+ 
 
 ## Credits and licence
 
-The stage structure of both guides follows a character and environment curriculum, whose course screenshots are included under `docs/assets/reference/` for study. Code and docs are under the [Apache 2.0 licence](LICENSE).
+The stage structure of both guides follows a character and environment curriculum, and each stage opens with a short text summary of the matching course module. Code and docs are under the [Apache 2.0 licence](LICENSE).

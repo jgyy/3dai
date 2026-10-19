@@ -2,7 +2,7 @@
 
 How to take a rough idea of a xianxia location to a finished, lit environment in **Godot 4**, using **Codex CLI** for 2D references and **Tripo CLI** for 3D assets, with **Blender** for cleanup and assembly.
 
-This guide adapts a seven-lesson environment curriculum (screenshots are embedded at each lesson). The curriculum targets ChatGPT, Nano Banana, Tripo's web app, and Unreal Engine 5. Here every generation step runs from the terminal, and the last lesson targets Godot.
+This guide adapts a seven-lesson environment curriculum (each lesson opens with a short summary of the matching lesson). The curriculum targets ChatGPT, Nano Banana, Tripo's web app, and Unreal Engine 5. Here every generation step runs from the terminal, and the last lesson targets Godot.
 
 > AI agents: read [`AGENTS.md`](../AGENTS.md) first. Its hard rules (dry-run before spending credits, inspect every result, stay on theme, one scale) apply to every command below.
 
@@ -77,7 +77,7 @@ xianxia fantasy, ancient Chinese immortal cultivation world, stylized realistic,
 
 ## Lesson 1: Idea and concepts
 
-![Lesson 1: Idea and concepts](assets/reference/environment-l1-idea-and-concepts.png)
+> **Curriculum summary.** Turn a rough idea into a visual plan for the whole location, from a hand-drawn sketch or a text prompt. Generate an isometric master reference showing every zone, then break it down into detailed references for individual assets. Use the reference quality checklist and the batching trick to save tokens.
 
 **Goal:** an isometric location reference plus a full set of asset references, ready for 3D generation.
 **Tools:** Codex CLI (image generation).
@@ -119,7 +119,7 @@ Generate **one sheet with 6–9 assets** (for example nine stone lanterns, tree 
 
 ## Lesson 2: Generation of 3D models
 
-![Lesson 2: Generation of 3D models](assets/reference/environment-l2-generation-of-3d-models.png)
+> **Curriculum summary.** Turn the references into 3D assets with AI: generate low-poly-first models and find the balance between detail and polygon count. Build simple modular elements by hand and texture them with AI when the generator cannot deliver clean results. Know when to generate with textures directly and when to go high-poly first and bake down.
 
 **Goal:** a library of generated and hand-built 3D assets, ready for optimization and texturing.
 **Tools:** `tripo make`, `tripo batch`, Blender.
@@ -187,7 +187,7 @@ tripo model texture art/blender/export/railing_white_stone.glb --texture-quality
 
 ## Lesson 3: Optimization and refinement
 
-![Lesson 3: Optimization and refinement](assets/reference/environment-l3-optimization-and-refinement.png)
+> **Curriculum summary.** Clean up generated assets for production: fix geometry issues, reduce polygon count where needed, and prepare meshes for proper material assignment. Bake high-poly detail onto low-poly versions to keep visual quality without the performance cost. Cut the total material count from 60-80 down to roughly 20.
 
 **Goal:** a clean, optimized asset library with correct geometry and a reduced material count.
 **Tools:** `tripo mesh decimate`, Blender.
@@ -229,7 +229,7 @@ tripo model texture art/blender/export/railing_white_stone.glb --texture-quality
 
 ## Lesson 4: Working with materials
 
-![Lesson 4: Working with materials](assets/reference/environment-l4-working-with-materials.png)
+> **Curriculum summary.** Make separately generated assets look like they belong in the same world: correct clashing colour palettes against the original references, set up proper PBR materials (roughness, metallic, normal), and unify the visual style across the library. Learn to fix the colour inconsistencies that AI generation always introduces.
 
 **Goal:** separately generated assets that look like they belong in the same world.
 **Tools:** `tripo model texture`, Blender.
@@ -273,7 +273,7 @@ AI generation always introduces colour inconsistency: the same stone comes out c
 
 ## Lesson 5: Building up the scene (exterior)
 
-![Lesson 5: Building up the scene (exterior)](assets/reference/environment-l5-building-the-scene-exterior.png)
+> **Curriculum summary.** Compose the outdoor environment from big to small: lay out mountain ranges and terrain first, then large structures and foundations, then modular buildings using symmetry workflows. Populate the scene with trees and flora using alpha masks, and add detail props at points of interest. Check against the original reference constantly. If the scale is wrong, fix the big shapes first.
 
 **Goal:** a fully assembled exterior with terrain, structures, vegetation, and detail props in place.
 **Tools:** Blender.
@@ -323,7 +323,7 @@ Import `heroine.glb` into your Blender scene as a scale reference and delete it 
 
 ## Lesson 6: Building up the scene (interior)
 
-![Lesson 6: Building up the scene (interior)](assets/reference/environment-l6-building-the-scene-interior.png)
+> **Curriculum summary.** Build the interior spaces with the same big-to-small logic: walls and floors first, then furniture and structural elements, then small props and decorative details. Handle interior-specific lighting and material behaviour in enclosed spaces, and learn the composition principles that make interiors feel lived-in and believable.
 
 **Goal:** completed interior spaces, furnished, detailed, and visually consistent with the exterior.
 **Tools:** Blender.
@@ -356,7 +356,7 @@ The same big-to-small logic applies inside closed spaces.
 
 ## Lesson 7: Export and scene setup in Godot
 
-![Lesson 7: Export and scene setup](assets/reference/environment-l7-export-and-scene-setup.png)
+> **Curriculum summary.** Export the finished environment from Blender and bring it into the game engine: import meshes and textures, rebuild materials, organise the level, and configure lighting, cameras, and final presentation settings so the scene works correctly in real time. This is the full handoff from an assembled Blender scene to a polished environment.
 
 **Goal:** the finished environment exported from Blender and set up in Godot, ready for final presentation.
 **Tools:** Blender, Godot 4.4+.
