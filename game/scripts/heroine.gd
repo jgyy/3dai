@@ -1,29 +1,55 @@
 class_name Heroine
 extends CharacterBody3D
 ## Third-person controller for the heroine. WASD or arrows move, Shift runs,
-## Space jumps, J or left mouse slashes.
+## Space jumps, J or left mouse slashes. Mouse wheel or Q/E zooms the camera.
 
 @export var walk_speed := 2.0
 @export var run_speed := 5.0
 @export var jump_velocity := 5.0
 @export var turn_speed := 10.0
+@export var zoom_min := 1.5
+@export var zoom_max := 8.0
+@export var zoom_step := 0.5
+@export var zoom_key_speed := 4.0
 
 @onready var model: Node3D = $Model
 @onready var anim: AnimationPlayer = $Model.find_child("AnimationPlayer", true, false)
 @onready var camera_pivot: Node3D = $CameraPivot
+@onready var camera: Camera3D = $CameraPivot/Camera3D
 
 var _gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity")
 var _slashing := false
+var _camera_dir: Vector3
+var _zoom_target: float
+var _zoom: float
 
 
 func _ready() -> void:
 	anim.animation_finished.connect(_on_animation_finished)
 	_play("idle")
+	_zoom = camera.position.length()
+	_zoom_target = _zoom
+	_camera_dir = camera.position / _zoom
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	if event is InputEventMouseButton and event.pressed:
+		if event.button_index == MOUSE_BUTTON_WHEEL_UP:
+			_set_zoom(_zoom_target - zoom_step)
+		elif event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
+			_set_zoom(_zoom_target + zoom_step)
 
 
 func _process(delta: float) -> void:
 	var target := global_position + Vector3(0.0, 1.2, 0.0)
 	camera_pivot.global_position = camera_pivot.global_position.lerp(target, clampf(8.0 * delta, 0.0, 1.0))
+	_set_zoom(_zoom_target + (_axis(KEY_E, KEY_Q)) * zoom_key_speed * delta)
+	_zoom = lerpf(_zoom, _zoom_target, clampf(10.0 * delta, 0.0, 1.0))
+	camera.position = _camera_dir * _zoom
+
+
+func _set_zoom(distance: float) -> void:
+	_zoom_target = clampf(distance, zoom_min, zoom_max)
 
 
 func _physics_process(delta: float) -> void:
