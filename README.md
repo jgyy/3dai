@@ -51,7 +51,7 @@ godot --path game --editor
 | `Shift` | Run |
 | `Space` | Jump |
 | `J` or left mouse | Slash |
-| Mouse wheel, `Q` / `E` | Zoom camera out / in |
+| Mouse wheel up / down, or `E` / `Q` | Zoom camera in / out |
 
 Save a screenshot from the real renderer (needs a display, so no `--headless`):
 
