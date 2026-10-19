@@ -23,3 +23,12 @@ mono_crash.*.json
 *.exe
 # Uncomment if your project does not version PCK files as runtime dependencies.
 # *.pck
+
+# 3D pipeline outputs and local state
+art/tripo-out/
+tripo-out/
+*.yaml.state.json
+*.blend1
+*.blend2
+.env
+node_modules/

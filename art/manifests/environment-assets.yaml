@@ -1,0 +1,37 @@
+# Sample asset batch for the Azure Cloud Sect (see docs/environment-pipeline.md, Lesson 2).
+#
+#   tripo balance
+#   tripo batch run art/manifests/environment-assets.yaml --concurrency 2
+#
+# Every text job here is dry-run validated by scripts/check_docs.py (no credits are spent in CI).
+# Do not combine smart_low_poly with the game-mobile preset: P1 drops it.
+concurrency: 2
+defaults:
+  for: game-mobile
+  then: "convert:gltf"
+  out: ./art/tripo-out/world
+jobs:
+  # Hero pieces: detailed PBR on v3.1
+  - input: "multi-tier xianxia pagoda, vermilion pillars, upswept eaves, glazed green roof tiles, white stone base, xianxia fantasy, stylized realistic, soft painterly PBR textures, jade and celadon palette, misty atmosphere"
+    name: pagoda-main
+    for: game-pc
+  - input: "xianxia paifang gate, carved white stone pillars, vermilion crossbeam, green tiled roof, xianxia fantasy, stylized realistic, soft painterly PBR textures, jade and celadon palette, misty atmosphere"
+    name: gate-paifang
+    for: game-pc
+  - input: "arched stone bridge over a pond with carved balustrades, xianxia fantasy, stylized realistic, soft painterly PBR textures, jade and celadon palette, misty atmosphere"
+    name: bridge-arched
+    for: game-pc
+
+  # Filler props: clean low-poly on P1
+  - input: "stone garden lantern with carved lotus base, xianxia fantasy, stylized realistic, soft painterly PBR textures, jade and celadon palette"
+    name: lantern-stone
+  - input: "bronze tripod incense cauldron with dragon handles, xianxia fantasy, stylized realistic, soft painterly PBR textures, jade and celadon palette"
+    name: cauldron-bronze
+  - input: "stone guardian lion statue on a plinth, xianxia fantasy, stylized realistic, soft painterly PBR textures, jade and celadon palette"
+    name: lion-stone
+  - input: "ancient twisted pine tree with layered green needle clusters, xianxia fantasy, stylized realistic, soft painterly PBR textures, jade and celadon palette"
+    name: tree-pine
+  - input: "peach blossom tree in full bloom with pink petals, xianxia fantasy, stylized realistic, soft painterly PBR textures, jade and celadon palette"
+    name: tree-peach
+  - input: "ceramic alchemy jar with jade lid and talisman seal, xianxia fantasy, stylized realistic, soft painterly PBR textures, jade and celadon palette"
+    name: jar-alchemy

@@ -1,0 +1,82 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  docs:
+    name: Docs, links, and Tripo commands
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "22"
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+
+      - name: Install tools
+        run: |
+          npm install -g tripo-cli@0.7.0
+          python3 -m pip install pyyaml==6.0.3
+
+      - name: Markdown lint
+        run: npx --yes markdownlint-cli2@0.23.3
+
+      - name: Check docs (links, diagrams, tripo dry runs)
+        run: python3 scripts/check_docs.py
+
+  mermaid:
+    name: Mermaid diagrams render
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "22"
+
+      - name: Render every mermaid block
+        run: |
+          # Use the Chrome preinstalled on the runner instead of downloading one.
+          # Runners restrict unprivileged user namespaces, so Chrome needs --no-sandbox.
+          echo '{"executablePath": "/usr/bin/google-chrome", "args": ["--no-sandbox", "--disable-setuid-sandbox"]}' > "$RUNNER_TEMP/puppeteer.json"
+          PUPPETEER_SKIP_DOWNLOAD=1 npm install --global @mermaid-js/mermaid-cli@12.0.0
+          mkdir -p "$RUNNER_TEMP/rendered"
+          for file in README.md AGENTS.md docs/*.md; do
+            echo "::group::$file"
+            mmdc --puppeteerConfigFile "$RUNNER_TEMP/puppeteer.json" \
+              --input "$file" \
+              --output "$RUNNER_TEMP/rendered/$(basename "$file")" \
+              --outputFormat svg
+            echo "::endgroup::"
+          done
+
+  godot:
+    name: Godot project imports
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.4.1
+          use-dotnet: false
+
+      - name: Import project
+        run: godot --headless --path game --import --quit
+
+      - name: Load main scene
+        run: godot --headless --path game --quit-after 2
